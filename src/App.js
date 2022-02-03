@@ -14,6 +14,7 @@ import NavBar from "./components/NavBar";
 import Standings from "./components/Standings";
 import "bootstrap/dist/css/bootstrap.min.css";
 import TopTenStats from "./components/top10stats/TopTenStats";
+import Test from "./components/Test";
 
 function App() {
   // const player = useSelector((state) => state.player);
@@ -30,6 +31,7 @@ function App() {
           {/* HOME */}
           <Route exact path="/">
             <LiveGamesTable/>
+            {/* <Test/> */}
           </Route>
           {/* ROSTERS */}
           <Route exact path="/rosters">

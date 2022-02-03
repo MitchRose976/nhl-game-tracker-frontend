@@ -14,8 +14,10 @@ function LiveGamesTable() {
   let day = dateObj.getUTCDate();
   let year = dateObj.getUTCFullYear();
   let newDate = year + "-" + month + "-" + (day - 1);
+  //console.log(currentDay)
   // url to fetch info for all live games
   let url = `https://nhl-score-api.herokuapp.com/api/scores?startDate=${currentDay}&endDate=${currentDay}`;
+  //let url = `https://statsapi.web.nhl.com/api/v1/schedule`
   // url to fetch teams array that will be used to get all teams in
   // league
   let teamUrl = "https://statsapi.web.nhl.com/api/v1/teams";
@@ -95,7 +97,8 @@ function LiveGamesTable() {
   // Collect all info from live games (status, team names, team logos, score, etc)
   // and push an accordion item for each game to an array to be rendered
   let liveGameData = [];
-  if (liveGames && teamLogos) {
+  if (liveGames && liveGames.length != 0 && teamLogos) {
+    console.log("entered");
     // Array to hold all games
     let allGames = liveGames[0].games;
     allGames.forEach((game) => {
@@ -123,7 +126,6 @@ function LiveGamesTable() {
       }
       let goals = [];
       if (game.status.state !== "POSTPONED") {
-        
         if (game.goals) {
           for (let i = 0; i < game.goals.length; i++) {
             goals.push(
@@ -136,22 +138,24 @@ function LiveGamesTable() {
                 <td>'{game.goals[i].min}</td>
                 {/* Goal Scorer */}
                 <td>
-                  {game.goals[i].scorer.player} ({game.goals[i].scorer.seasonTotal}) {game.goals[i].strength ? game.goals[i].strength : ""}
+                  {game.goals[i].scorer.player} (
+                  {game.goals[i].scorer.seasonTotal}){" "}
+                  {game.goals[i].strength ? game.goals[i].strength : ""}
                 </td>
                 {/* Assists */}
                 <td className="assists-cell">
-                {
-                    game.goals[i].assists[0] ? `${game.goals[i].assists[0].player} (${game.goals[i].assists[0].seasonTotal})` : ""
-                } 
-                {
-                    game.goals[i].assists[1] ? `, ${game.goals[i].assists[1].player} (${game.goals[i].assists[1].seasonTotal})` : ""
-                }
+                  {game.goals[i].assists[0]
+                    ? `${game.goals[i].assists[0].player} (${game.goals[i].assists[0].seasonTotal})`
+                    : ""}
+                  {game.goals[i].assists[1]
+                    ? `, ${game.goals[i].assists[1].player} (${game.goals[i].assists[1].seasonTotal})`
+                    : ""}
                 </td>
               </tr>
             );
           }
         } else {
-            console.log("no goals");
+          console.log("no goals");
         }
       }
       // Push the live game data to the array
@@ -187,12 +191,7 @@ function LiveGamesTable() {
             </Container>
           </Accordion.Header>
           <Accordion.Body>
-            <Table
-              striped
-              bordered
-              hover
-              responsive
-            >
+            <Table striped bordered hover responsive>
               <thead>
                 <tr>
                   <th>Period</th>
@@ -208,6 +207,17 @@ function LiveGamesTable() {
         </Accordion.Item>
       );
     });
+  } else {
+    liveGameData.push(
+      <Accordion.Item eventKey="0">
+        <Accordion.Header style={{padding: "1rem 0"}}>
+          <GameStatusDiv>
+            <GameStatus style={{fontSize: "1.5rem", padding: "1rem"}}>No Games Today. Check out some stats!</GameStatus>
+          </GameStatusDiv>
+        </Accordion.Header>
+        <Accordion.Body></Accordion.Body>
+      </Accordion.Item>
+    );
   }
 
   return (
@@ -220,7 +230,7 @@ function LiveGamesTable() {
     >
       <ScoreboardHeader>Scoreboard</ScoreboardHeader>
       <Accordion>
-        {liveGameData ? liveGameData : "Error while loading data"}
+        {liveGameData ? liveGameData : "Error Loading Data"}
       </Accordion>
     </Container>
   );
@@ -238,7 +248,7 @@ const GameStatusDiv = styled.div`
   height: 2.5rem;
   min-width: 6rem;
   font-weight: bold;
-  ${'' /* border: 1px solid blue; */}
+  ${"" /* border: 1px solid blue; */}
   display: flex;
   justify-content: center;
   align-items: center;
